@@ -10,3 +10,4 @@ docs/_build
 *.jpg
 *.flac
 credentials.py
+test.py
