@@ -3,6 +3,7 @@ import asyncio
 import credentials
 from random import sample as randSample
 from time import gmtime as gmtime
+from time import sleep
 
 client = discord.Client()
 
@@ -19,20 +20,23 @@ async def on_ready():
 @client.event
 async def on_message(message):
 
-    premissions = message.author.premissions
+    permissions = message.author.server_permissions
 
-    for premission_name, have_premission in premissions:
-        if premission_name == "administrator":
-            admin = have_premission
+    for permission_name, have_permission in permissions:
+        if permission_name == "administrator":
+            admin = have_permission
             break
 
     if admin:
 
         # For testing only.
-        if message.content.startswith("!eval"):
-            eval(message.content[6:])
+        #if message.content.startswith("b!eval"):
+        #    eval(message.content[6:])
 
-        if message.content.startswith("!logout"):
+        if message.content.startswith("b!admintest"):
+            await client.send_message(message.channel, "All hail lord {0}.".format(message.author.name))
+
+        if message.content.startswith("b!logout"):
             await client.logout()
             print("Exiting.")
             try:
@@ -40,7 +44,7 @@ async def on_message(message):
             except:
                 pass
 
-    if message.content.startswith("!test"):
+    if message.content.startswith("b!test"):
         await client.send_message(message.channel, "Reporting in.")
 
 @client.event
@@ -59,12 +63,19 @@ async def on_member_join(member):
 
 @client.event
 async def randPlay():
+    #I need to fix this.
 
-    if not gmtime()[3] % 2:
+    plays = ["with himself", "with your mind", "with gravity", "dead"]
+    playing = randSample(plays, 1)[0]
 
-        plays = ["with himself", "with your mind", "with gravity", "dead", "tricks"]
-        playing = randSample(plays, 1)[0]
-        
+    while True:
+
         await client.change_presence(game=discord.Game(name=playing))
+
+        for _ in range(3600):
+            await asyncio.sleep(1)
+
+    if list(gmtime())[3] % 2:
+            await client.change_presence(game=discord.Game(name=playing))
 
 client.run(credentials.getToken())
