@@ -46,7 +46,7 @@ async def on_member_join(member):
 @client.event
 async def randPlay():
     if not gmtime()[3] % 2:
-        plays = ["with himself"]
+        plays = ["with himself", "with your mind", "with gravity", "dead", "tricks"]
         playing = randSample(plays, 1)[0]
         await client.change_presence(game=discord.Game(name=playing))
 
