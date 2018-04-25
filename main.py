@@ -45,11 +45,15 @@ async def on_message(message):
         }
 
         for level in expertise:
-            if len(set(message_text).symmetric_difference(expertise[level])) <= 4:
-                for role in message.server.roles:
-                    if role.name.lower() == level.lower():
-                        await client.add_roles(message.author, role)
-                        break
+            difference = {}
+            difference[len(set(message_text).symmetric_difference(expertise[level]))] = level
+
+        if min(difference.keys()) <= 4:
+            level = difference[min(difference.keys())]
+            for role in message.server.roles:
+                if role.name.lower() == level.lower():
+                    await client.add_roles(message.author, role)
+                    break
     #queue the resource suggestion
     if message.content.startswith("b!recommend") and message.channel.name == "test":
 
