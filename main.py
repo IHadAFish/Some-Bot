@@ -3,7 +3,6 @@ import asyncio
 import credentials
 from random import sample as randSample
 from time import gmtime as gmtime
-from time import sleep
 
 client = discord.Client()
 
@@ -15,9 +14,10 @@ async def on_ready():
     print(client.user.id)
     print("------")
 
-
-
     await randPlay()
+
+global recommendations
+recommendations = []
 
 @client.event
 async def on_message(message):
@@ -49,12 +49,25 @@ async def on_message(message):
                 for role in message.server.roles:
                     if role.name.lower() == level.lower():
                         await client.add_roles(message.author, role)
+                        break
+    #queue the resource suggestion
+    if message.content.startswith("b!recommend") and message.channel.name == "test":
+
+        recommendations.append(message.content[13:] + " Provider: {0}".format(message.author.name))
+        print(recommendations)
+        await client.send_message(message.channel, "Thank you for the recommendation. The admins have been alerted.")
+
+        await call_admin(message.channel, "New recommendation.")
 
     if admin:
 
+        if message.content.startswith("b!getrecommendation"):
+            await client.send_message(message.channel, recommendations.pop(0))
+            await client.send_message(message.channel, "{0} more in queue.".format(len(recommendations)))
+
         # For testing only.
-        if message.content.startswith("b!eval"):
-            eval(message.content[6:])
+        #if message.content.startswith("b!eval"):
+        #    eval(message.content[6:])
 
         if message.content.startswith("b!admintest"):
             await client.send_message(message.channel, "All hail lord {0}.".format(message.author.name))
@@ -108,9 +121,9 @@ async def randPlay():
             await client.change_presence(game=discord.Game(name=playing))
 
 @client.event
-async def call_admin(channel):
+async def call_admin(channel, reason="None"):
 
-    text = "Generals @admin , another settlement needs your help. #{0}".format(channel.name)
+    text = "Generals @admin , another settlement needs your help. #{0} {1}".format(channel.name, reason)
 
     #434578647110778882 is the channel id for LearnJapanese #secret-scheming.
     await client.send_message(client.get_channel("434578647110778882"), text)
