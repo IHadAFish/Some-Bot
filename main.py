@@ -39,13 +39,13 @@ async def on_message(message):
 
         #needs more alias
         expertise = {
-            "Beginners": ["beginner"],
-            "Intermediates": ["intermediate"],
-            "Experts": ["expert"]
+            "Beginners": set("beginner"),
+            "Intermediates": set("intermediate"),
+            "Experts": set("expert")
         }
 
         for level in expertise:
-            if message_text in expertise[level]:
+            if set(message_text).symmetric_difference(expertise[level]) <= 4:
                 for role in message.server.roles:
                     if role.name.lower() == level.lower():
                         await client.add_roles(message.author, role)
