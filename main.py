@@ -45,7 +45,7 @@ async def on_message(message):
         }
 
         for level in expertise:
-            if set(message_text).symmetric_difference(expertise[level]) <= 4:
+            if len(set(message_text).symmetric_difference(expertise[level])) <= 4:
                 for role in message.server.roles:
                     if role.name.lower() == level.lower():
                         await client.add_roles(message.author, role)
