@@ -15,6 +15,8 @@ async def on_ready():
     print(client.user.id)
     print("------")
 
+
+
     await randPlay()
 
 @client.event
@@ -27,10 +29,26 @@ async def on_message(message):
             admin = have_permission
             break
 
+    #Auto assign roles in #set-your-role
     if message.channel.name == "set-your-role":
+
+        if not set(message.author.roles).isdisjoint(set(["Beginners", "Intermediates", "Experts"])):
+            await client.send_message(message.channel, "You already set your expertise level, if you are looking for a level up, please contact an admin.")
+
         message_text = message.content.lower()
 
-        beginner = ["beginner"]
+        #needs more alias
+        expertise = {
+            "Beginners": ["beginner"],
+            "Intermediates": ["intermediate"],
+            "Experts": ["expert"]
+        }
+
+        for level in expertise:
+            if message_text in expertise[level]:
+                for role in message.server.roles:
+                    if role.name.lower() == level.lower():
+                        await client.add_roles(message.author, role)
 
     if admin:
 
@@ -58,6 +76,7 @@ async def on_message(message):
 @client.event
 async def on_member_join(member):
 
+    #Welcome message when member join.
     if not member.bot:
 
         channels = member.server.channels
@@ -67,7 +86,9 @@ async def on_member_join(member):
                 t_channel = channel
                 break
 
-        await client.send_message(t_channel, "Welcome")
+        #spider privided the message.
+        await client.send_message(t_channel,
+            "Welcome to the server, {0} ! To set your expertise level, go to #set-your-role , if you have any questions/suggestions, go to #suggestions  or ping an admin.".format(member.name))
 
 @client.event
 async def randPlay():
