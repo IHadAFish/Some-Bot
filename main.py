@@ -27,11 +27,16 @@ async def on_message(message):
             admin = have_permission
             break
 
+    if message.channel.name == "set-your-role":
+        message_text = message.content.lower()
+
+        beginner = ["beginner"]
+
     if admin:
 
         # For testing only.
-        #if message.content.startswith("b!eval"):
-        #    eval(message.content[6:])
+        if message.content.startswith("b!eval"):
+            eval(message.content[6:])
 
         if message.content.startswith("b!admintest"):
             await client.send_message(message.channel, "All hail lord {0}.".format(message.author.name))
@@ -44,8 +49,11 @@ async def on_message(message):
             except:
                 pass
 
-    if message.content.startswith("b!test"):
-        await client.send_message(message.channel, "Reporting in.")
+        if message.content.startswith("b!test"):
+            await client.send_message(message.channel, "Reporting in.")
+
+        if message.content.startswith("b!alerttest"):
+            await call_admin(message.channel)
 
 @client.event
 async def on_member_join(member):
@@ -77,5 +85,14 @@ async def randPlay():
 
     if list(gmtime())[3] % 2:
             await client.change_presence(game=discord.Game(name=playing))
+
+@client.event
+async def call_admin(channel):
+
+    text = "Generals @admin , another settlement needs your help. #{0}".format(channel.name)
+
+    #434578647110778882 is the channel id for LearnJapanese #secret-scheming.
+    await client.send_message(client.get_channel("434578647110778882"), text)
+    #await client.send_message(client.get_channel("434287964269445122"), text)
 
 client.run(credentials.getToken())
