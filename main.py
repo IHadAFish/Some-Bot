@@ -1,8 +1,9 @@
-import discord, sys
-import asyncio
-import credentials
+import discord, asyncio, credentials, re
+from sys import exit
 from random import sample as randSample
-from time import gmtime as gmtime
+from time import gmtime
+from SomeError import SomeError
+from timeconverter import time_converter
 
 client = discord.Client()
 
@@ -54,6 +55,17 @@ async def on_message(message):
                 if role.name.lower() == level.lower():
                     await client.add_roles(message.author, role)
                     break
+
+    #if message.content.startswith("b!convert"):
+    #    args = message.content.split(" ")[1:]
+
+    #    if message.content.startswith("b!convert-time"):
+    #        try:
+    #            time_converter()
+
+
+
+
     #queue the resource suggestion
     if message.content.startswith("b!recommend") and message.channel.name == "test":
 
@@ -80,15 +92,36 @@ async def on_message(message):
             await client.logout()
             print("Exiting.")
             try:
-                sys.exit()
+                exit()
             except:
                 pass
 
         if message.content.startswith("b!test"):
-            await client.send_message(message.channel, "Reporting in.")
+            desc = "AHH shit."
+            em = discord.Embed(title='My Embed Title', description=desc)
+            await client.send_message(message.channel, embed=em)
 
-        if message.content.startswith("b!alerttest"):
-            await call_admin(message.channel)
+        #if message.content.startswith("b!alerttest"):
+        #    await call_admin(message.channel)
+
+    if message.content.startswith("b!help"):
+        if message.content.startswith("b!help-convert"):
+            desc = "Say b!convert <hour:minute> <timezone/location> <your timezone/location> to convert time.\nSupport both 24 hour and 12 hour format."
+            examples = """b!convert 8pm tokyo london
+> 8pm Tokyo is 12 pm London
+b!convert 17 Singapore EST
+> 17 Singapore is 4 EST"""
+
+            content = discord.Embed(title="Time converter", description = desc)
+            content.add_field(name="Examples", value = examples)
+            await client.send_message(message.channel, embed=content)
+
+        help_content = "Type b!recommend + your recommendation in #place-holder to give out an recommendation for resource."
+        if admin:
+            help_content += "\nb!getrecommendation to retrive an recommendation."
+
+        client.send_message(message.channel, help_content)
+
 
 @client.event
 async def on_member_join(member):
