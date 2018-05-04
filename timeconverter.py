@@ -58,8 +58,11 @@ def get_datetime(t_time, t_date=None, zone=pytz.timezone("UTC")):
 def time_convert(origin_tz, target_tz, t_time):
 
     origin_time = get_datetime(t_time, zone=origin_tz)
+    target_time = origin_time.astimezone(target_tz)
 
-    return origin_time.astimezone(target_tz)
+    day_diff = target_time - get_datetime(t_time, zone=target_tz)
+
+    return target_time, day_diff
 
 def datetime_convert(origin_tz, target_tz, t_time, t_date):
 
@@ -67,16 +70,12 @@ def datetime_convert(origin_tz, target_tz, t_time, t_date):
 
     return origin_time.astimezone(target_tz)
 
-def get_timedelta(f_tz, s_tz, f_time, f_date, s_time, s_date):
+def delta_convert(f_tz, s_tz, f_time, f_date, s_time, s_date):
 
-    #return timedelta and True if f_datetime later than s_datetime, else timedelta and False
     f_datetime = get_datetime(f_time, f_date, f_tz)
     s_datetime = get_datetime(s_time, s_date, s_tz)
 
-    if f_datetime > s_datetime:
-        return f_datetime - s_datetime, True
-
-    return s_datetime - f_datetime, False
+    return f_datetime - s_datetime
 
 def time_converter(origin, target, mode, t_time, t_date=None, s_time=None, s_date=None):
 
@@ -94,4 +93,4 @@ def time_converter(origin, target, mode, t_time, t_date=None, s_time=None, s_dat
     else:
         if not (t_date and s_time and s_date):
             raise ValueError
-        return get_timedelta(origin_tz, target_tz, t_time, t_date, s_time, s_date)
+        return delta_convert(origin_tz, target_tz, t_time, t_date, s_time, s_date)
