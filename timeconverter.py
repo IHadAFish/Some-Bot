@@ -53,14 +53,14 @@ def get_datetime(t_time, t_date=None, zone=pytz.timezone("UTC")):
         else:
             time_format = "%H"
 
-    return datetime.combine(t_date, datetime.strptime(t_time, time_format).time())
+    return datetime.combine(t_date, datetime.strptime(t_time, time_format).time(), tzinfo=zone)
 
 def time_convert(origin_tz, target_tz, t_time):
 
     origin_time = get_datetime(t_time, zone=origin_tz)
-    target_time = origin_time.astimezone(target_tz)
+    target_time = origin_time.astimezone(tz=target_tz)
 
-    day_diff = target_time - get_datetime(t_time, zone=target_tz)
+    day_diff = origin_time - target_time
 
     return target_time, day_diff
 

@@ -57,7 +57,7 @@ async def on_message(message):
                     break
 
     if message.content.startswith("b!convert"):
-
+        args = message.content.split(" ")[1:]
 
         try:
             if message.content.startswith("b!convert-time") or message.content.startswith("b!convert "):
@@ -96,35 +96,35 @@ async def on_message(message):
 
             results = list(time_converter(**time_args))
 
-            if time_args.mode == "t":
+            if time_args["mode"] == "t":
 
                 day_pharse = {
                     -1: "yesterday ",
                     0: "",
                     1: "tomorrow"
                 }
-                day_diff = day_pharse[result[-1].days]
+                day_diff = day_pharse[results[-1].days]
 
-                n_time = result[0].strftime("%I-%M%p")
+                n_time = results[0].strftime("%I:%M%p")
 
                 msg = "{origin} {t_time} is {n_time} {day_diff}{target}.".format(**time_args, day_diff=day_diff, n_time=n_time)
 
-            elif time_args.mode == "dt":
+            elif time_args["mode"] == "dt":
 
-                n_time = result[0].strftime("%B %d, %I-%M%p")
+                n_time = results[0].strftime("%B %d, %I:%M%p")
 
                 msg = "{origin} {t_time} {t_date} is {n_time} {target}.".format(**time_args, day_diff=day_diff, n_time=n_time)
 
-            elif time_args.mode == "delta":
+            elif time_args["mode"] == "delta":
 
                 time_delta_args = {
-                    "days": abs(result[0].days),
-                    "hour": result[0].second//3600,
-                    "minute": (result[0] % 3600)//60
+                    "days": abs(results[0].days),
+                    "hour": results[0].second//3600,
+                    "minute": (results[0] % 3600)//60
                 }
                 time_delta = "{days} day {hour} hour and {minute} minute".format(**time_delta_args)
 
-                if result[0].days < 0 or result[0].seconds < 0:
+                if results[0].days < 0 or results[0].seconds < 0:
                     time_diff = "earlier"
                 else:
                     time_diff = "later"
@@ -132,23 +132,25 @@ async def on_message(message):
                 msg = "{origin} {t_time} {t_date} is {time_delta} {time_diff} than {target} {s_time} {s_date}.".format(
                       time_delta=time_delta, time_diff=time_diff, **time_args)
 
-                await client.send_message(channel=message.channel, msg)
+            await client.send_message(message.channel, msg)
 
         except SomeError as e:
             err_msgs = {
                 "location_not_exist": "The timezone/location you said is not supported. Sorry :p",
+                "mode_not_exist": "There's something wrong with the mode you said. Say b!help-convert for help."
             }
 
-            err_msg = err_msg[repr(e)]
+            err_msg = err_msgs[repr(e)]
 
         except ValueError:
             err_msg = "There's something wrong with the time you said. Say b!help-convert for help."
 
-        except:
-            err_msg = "Something is wrong with your command. Say b!help-convert for help."
-
-        if err_msg:
-            await client.send_message(channel=message.channel, msg)
+        #except:
+        #    err_msg = "Something is wrong with your command. Say b!help-convert for help."
+        try:
+            await client.send_message(message.channel, err_msg)
+        except UnboundLocalError:
+            pass
 
     #queue the resource suggestion
     if message.content.startswith("b!recommend") and message.channel.name == "test":
