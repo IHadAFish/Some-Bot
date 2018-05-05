@@ -69,7 +69,7 @@ async def on_message(message):
                     "mode": "t"
                 }
 
-            elif message.content.startswith("b!convert-datetime"):
+            elif message.content.startswith("b!convert-date"):
 
                 time_args = {
                     "t_time": args[0],
@@ -94,9 +94,9 @@ async def on_message(message):
             else:
                 raise SomeError("mode_not_exist")
 
-            results = list(time_converter(**time_args))
-
             if time_args["mode"] == "t":
+
+                results = list(time_converter(**time_args))
 
                 day_pharse = {
                     -1: "of yesterday ",
@@ -111,11 +111,15 @@ async def on_message(message):
 
             elif time_args["mode"] == "dt":
 
+                results = [time_converter(**time_args)]
+
                 n_time = results[0].strftime("%B %d, %I:%M%p")
 
-                msg = "{origin} {t_time} {t_date} is {n_time} {target}.".format(**time_args, day_diff=day_diff, n_time=n_time)
+                msg = "{origin} {t_time} {t_date} is {n_time} {target}.".format(**time_args, n_time=n_time)
 
             elif time_args["mode"] == "delta":
+
+                results = list(time_converter(**time_args))
 
                 time_delta_args = {
                     "days": abs(results[0].days),
@@ -192,18 +196,31 @@ async def on_message(message):
 
     if message.content.startswith("b!help"):
         if message.content.startswith("b!help-convert"):
-            desc = ""
-            examples = ""
 
-            content = discord.Embed(title="Time converter", description = desc)
-            content.add_field(name="Examples", value = examples)
+            desc = "There are 2 mode for time converter. Say b!help-convert to get this message."
+            content = discord.Embed(title="Time converter", description=desc)
+
+            #Time convert
+            t_convert_content = "Say b!convert <time> <original timezone/cityname> <target timezone/cityname>\nIf there's more than one word in your city name, put a _ in between them.\n"
+            t_convert_example = """Example:
+```> b!convert 6:30 HongKong EST
+> HongKong 6:30 is 05:43PM EST.```"""
+
+            content.add_field(name="Time convert", value=t_convert_content+t_convert_example)
+
+            dt_convert_content = "Say b!convert-date <time> <date> <original timezone/cityname> <target timezone/cityname>\nIf there's more than one word in your city name, put a _ in between them.\nMake sure the format for the date is date-month.\n"
+            dt_convert_example = """Example:
+```> b!convert-date 6:30am 23-12 HongKong iceland
+> HongKong 6:30 23-11 is November 22, 10:30PM Iceland.```"""
+
+            content.add_field(name="Date convert", value=dt_convert_content+dt_convert_example)
             await client.send_message(message.channel, embed=content)
 
         help_content = "Type b!recommend + your recommendation in #place-holder to give out an recommendation for resource."
         if admin:
             help_content += "\nb!getrecommendation to retrive an recommendation."
 
-        client.send_message(message.channel, help_content)
+        await client.send_message(message.channel, help_content)
 
 
 @client.event
