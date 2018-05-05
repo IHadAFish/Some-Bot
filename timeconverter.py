@@ -7,7 +7,6 @@ def get_timezone(zone):
     #return a pytz.timezone obj.
     for t_zone in iglob("./pytz/zoneinfo/**", recursive=True):
         if t_zone.upper().endswith("\\" + zone.upper()):
-            print(t_zone.upper())
             temp = t_zone.replace("./pytz/zoneinfo\\", "").replace("\\", "/")
             return pytz.timezone(temp)
 
@@ -60,7 +59,8 @@ def time_convert(origin_tz, target_tz, t_time):
 
     origin_time = get_datetime(t_time, zone=origin_tz)
     target_time = origin_time.astimezone(tz=target_tz)
-    print(repr(target_tz))
+    print("origin", repr(origin_tz))
+    print("target", repr(target_tz))
 
     day_diff = origin_time - target_time
 

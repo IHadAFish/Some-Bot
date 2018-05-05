@@ -17,9 +17,18 @@ _timedelta_cache = {}
 
 def memorized_timedelta(seconds):
     '''Create only one instance of each distinct timedelta'''
+
     try:
-        return _timedelta_cache[seconds]
+        print(_timedelta_cache)
+        return (_timedelta_cache[seconds])
     except KeyError:
+
+        #added by anohter guy.
+        if seconds % 3600 >= 1800:
+            seconds = (seconds // 3600 + 1) * 3600
+        else:
+            seconds = seconds // 3600 * 3600
+
         delta = timedelta(seconds=seconds)
         _timedelta_cache[seconds] = delta
         return delta
