@@ -99,11 +99,11 @@ async def on_message(message):
             if time_args["mode"] == "t":
 
                 day_pharse = {
-                    -1: "yesterday ",
+                    -1: "of yesterday ",
                     0: "",
-                    1: "tomorrow"
+                    1: "of tomorrow "
                 }
-                day_diff = day_pharse[results[-1].days]
+                day_diff = day_pharse[results[-1]]
 
                 n_time = results[0].strftime("%I:%M%p")
 

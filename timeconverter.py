@@ -59,10 +59,8 @@ def time_convert(origin_tz, target_tz, t_time):
 
     origin_time = get_datetime(t_time, zone=origin_tz)
     target_time = origin_time.astimezone(tz=target_tz)
-    print("origin", repr(origin_tz))
-    print("target", repr(target_tz))
 
-    day_diff = origin_time - target_time
+    day_diff = target_time.day - origin_time.day
 
     return target_time, day_diff
 
