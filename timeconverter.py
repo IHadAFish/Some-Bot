@@ -44,9 +44,9 @@ def get_datetime(t_time, t_date=None, zone=pytz.timezone("UTC")):
 
     if t_time.endswith("m"):
         if ":" in t_time:
-            time_format = "%I:%M%P"
+            time_format = "%I:%M%p"
         else:
-            time_format = "%H%P"
+            time_format = "%H%p"
     else:
         if ":" in t_time:
             time_format = "%H:%M"

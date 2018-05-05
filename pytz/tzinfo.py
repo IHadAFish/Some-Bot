@@ -19,7 +19,6 @@ def memorized_timedelta(seconds):
     '''Create only one instance of each distinct timedelta'''
 
     try:
-        print(_timedelta_cache)
         return (_timedelta_cache[seconds])
     except KeyError:
 
