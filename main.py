@@ -216,11 +216,18 @@ async def on_message(message):
             content.add_field(name="Date convert", value=dt_convert_content+dt_convert_example)
             await client.send_message(message.channel, embed=content)
 
-        help_content = "Type b!recommend + your recommendation in #place-holder to give out an recommendation for resource."
-        if admin:
-            help_content += "\nb!getrecommendation to retrive an recommendation."
+        else:
+            desc = """b!recommend <the recommendation> in #place-holder to give out an recommendation for resource.
+b!help-convert for help on the time converter."""
+            help_content = discord.Embed(title="Commands:", description=desc)
 
-        await client.send_message(message.channel, help_content)
+            if admin:
+
+                admin_content = "b!getrecommendation to retrive an recommendation."
+                help_content.add_field(name="Admin commands:", value=admin_content)
+
+
+            await client.send_message(message.channel, embed=help_content)
 
 
 @client.event
@@ -244,7 +251,7 @@ async def on_member_join(member):
 async def randPlay():
     #I need to fix this.
 
-    plays = ["with himself", "with your mind", "with gravity", "dead"]
+    plays = ["with himself", "with your mind", "with gravity", "dead", "with fire"]
     playing = randSample(plays, 1)[0]
 
     while True:
@@ -258,7 +265,7 @@ async def randPlay():
             await client.change_presence(game=discord.Game(name=playing))
 
 @client.event
-async def call_admin(channel, reason="None"):
+async def call_admin(channel, reason=None):
 
     text = "Generals @admin , another settlement needs your help. #{0} {1}".format(channel.name, reason)
 
